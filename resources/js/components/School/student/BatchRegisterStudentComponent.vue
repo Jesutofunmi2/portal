@@ -1,0 +1,287 @@
+<template>
+    <div class="row match-height">
+		<div class="col-md-12 ">
+			<div class="card">
+				<div class="card-header">
+					<h4 class="card-title" id="basic-layout-tooltip">Batch Student Registration</h4>
+					<a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+					<div class="heading-elements">
+						<ul class="list-inline mb-0">
+							<li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+							<li><a data-action="reload"><i class="icon-reload"></i></a></li>
+							<li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+							<li><a data-action="close"><i class="icon-cross2"></i></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="card-body collapse in">
+					<div class="card-block">
+
+                        <div class="mb-2">
+                            <button class="btn btn-primary ml-1" @click="downloadFile">
+                                <i class="icon-download3"></i> DownLoad Registration Template
+                            </button>
+                        </div>
+
+						<form class="form" novalidate @submit.prevent="registerStudent">
+							<div class="form-body">
+
+                                <div class="form-group col-md-6">
+									<label for="issueinput19">Class</label>
+									<select id="issueinput19" v-model="class_id" @change="changeClass($event)" :class="{'border-danger':validationErrors.class_id}" class="form-control" name="class_id" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Class" required>
+										<option value="">Select Class</option>
+										<option :value="clas.id" v-for ="(clas, index) in classes" :key ="index" >{{ clas.class_name }}</option>
+									</select>
+									<span  v-if="validationErrors.class_id" :class="['label text-danger']">{{ validationErrors.class_id[0] }}</span>
+								</div>
+
+                                <div class="form-group col-md-6">
+									<label for="issueinput20">Class Arm</label>
+									<select id="issueinput20" v-model="classarm_id" @change="validationErrors.classarm_id=null" :class="{'border-danger':validationErrors.classarm_id}" class="form-control" name="classarm_id" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Class Arm" required>
+										<option value="">Select Class Arm</option>
+										<option :value="clasarm.id" v-for ="(clasarm, index) in classArms" :key ="index" >{{ clasarm.class_arm }}</option>
+									</select>
+									<span  v-if="validationErrors.classarm_id" :class="['label text-danger']">{{ validationErrors.classarm_id[0] }}</span>
+								</div>
+
+                                <div class="form-group col-md-6">
+									<label for="issueinput21">Session</label>
+									<select type="text" id="issueinput3" v-model="session_s" @change="students=''" :class="{'border-danger':validationErrors.session}" class="form-control" name="session" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Session" required>
+                                            <option value="">Select Session</option>
+                                           <option v-for="year in session()" :key="year" :value="year">{{year}}/{{year+1}}</option>
+                                    </select>
+									<span  v-if="validationErrors.session" :class="['label text-danger']">{{ validationErrors.session[0] }}</span>
+								</div>
+
+                                <div class="form-group col-md-6">
+									<label for="issueinput22">Term</label>
+									<select type="text" id="issueinput22" v-model="term" @change="validationErrors.term=null" :class="{'border-danger':validationErrors.term}" class="form-control" name="term" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Term" required>
+										<option value="">Select Term</option>
+										<option value="First">First</option>
+                                        <option value="Second">Second</option>
+                                        <option value="Third">Third</option>
+									</select>
+									<span  v-if="validationErrors.term" :class="['label text-danger']">{{ validationErrors.term[0] }}</span>
+								</div>
+
+                                <div class="form-group">
+									<label for="issueinput01">Upload Batch File</label>
+									<input id="upFile" type="file" @change="onFileChange" :class="{'border-danger':validationErrors.file}" ref="file" accept="xls,xlsx,csv"  class="form-control" placeholder="Registration File" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Batch File" required>
+									<span v-if="validationErrors.file" :class="['label text-danger']">{{ validationErrors.file[0] }}</span>
+								</div>
+
+							</div>
+
+                            <div class="mb-2" v-if="failures.length > 0">
+                                <ul>
+                                    <li v-for="(fail, index) in failures" :key="index" class="text-danger">
+                                        <span v-if="fail.row">There was an issue on row: {{ fail.row }}, for {{ fail.attrib }}.</span>  
+                                
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="mb-2" v-if="errors.length > 0">
+                                <ul>
+                                    <li v-for="(error, index) in errors" :key="index" class="text-danger">
+                                        <span class="text-danger">{{ error }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+							<div class="form-actions">
+								<button type="button" class="btn btn-warning mr-1">
+									<i class="icon-cross2"></i> Cancel
+								</button>
+								<button type="submit" class="btn btn-primary">
+									<i class="icon-check2"></i> Register
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<FlashMessage></FlashMessage>
+
+	</div>
+</template>
+
+<script>
+export default {
+    
+    data() {
+        return {
+            file : '',
+            session_s : null,
+            term : '',
+            class_id : '',
+            classarm_id : '',
+            sessions : [],
+            classes : '',
+            classArms : '',
+            failures : '',
+            errors : '',
+            validationErrors: [],
+        }
+    },
+
+    mounted() {
+        this.getClasses()
+    },
+
+    methods: {
+
+        getClasses() {
+            this.$loading(true)
+            axios.get('/api/school/class/view/all')
+            .then((res) => {
+                this.classes = res.data.data
+                this.$loading(false)
+            })
+            .catch((error) => {
+                this.$loading(false)
+                if (!error.response) {
+                    this.$alert("You do not have internet access","Network Error","error");
+                    this.$router.go(-1) ;
+                    return ;
+                }
+                if(error.response.status === 401){
+                    let return_url = window.location.pathname;
+                    this.$router.push({
+                                name: 'school-login',
+                                params: { return_url: return_url }
+                                });
+                }
+
+            })
+        },
+
+        changeClass(event) {
+            this.validationErrors.class_id=null
+            let classID = event.target.value
+            this.getClassArms(classID)
+        },
+
+        getClassArms(classID) {
+            this.$loading(true)
+            axios.get(`/api/school/classarm/view/${classID}`)
+            .then((res) => {
+                this.classArms = res.data.data
+                this.$loading(false)
+            })
+            .catch((error) => {
+                this.$loading(false)
+                if (!error.response) {
+                    this.$alert("You do not have internet access","Network Error","error");
+                    this.$router.go(-1) ;
+                    return ;
+                }
+                if(error.response.status === 401){
+                    let return_url = window.location.pathname;
+                    this.$router.push({
+                                name: 'school-login',
+                                params: { return_url: return_url }
+                                });
+                }
+
+            })
+        },
+
+        onFileChange() {
+            this.validationErrors.file = null
+
+            let files = this.$refs.file.files
+
+            if (!files.length) return
+            
+            this.file = files[0]
+        },
+
+        downloadFile() {
+            axios({
+                url: '/exceluploads/studentBatchRegistration.xls',
+                method: 'GET',
+                responseType: 'blob',
+            }).then((response) => {
+                    var fileURL = window.URL.createObjectURL(new Blob([response.data]));
+                    var fileLink = document.createElement('a');
+
+                    fileLink.href = fileURL;
+                    fileLink.setAttribute('download', 'studentBatchRegistration.xls');
+                    document.body.appendChild(fileLink);
+
+                    fileLink.click();
+            });
+        },
+            
+        registerStudent() {
+            let data = new FormData
+            data.append('file', this.file)
+            data.append('class_id', this.class_id)
+            data.append('classarm_id', this.classarm_id)
+            data.append('session', this.session_s)
+            data.append('term', this.term)
+            
+            this.$loading(true)
+
+            axios.post('/api/school/student/batchregister',data)
+            .then(response => {
+                if(response) {
+                    this.$loading(false)
+                    this.flashMessage.success({
+                        title: 'Successful',
+                        message: response.data.data.message,
+                        time: 15000,
+                        flashMessageStyle: {
+                            backgroundColor: 'linear-gradient(#e66465, #9198e5)'
+                        }
+                    })
+
+                    this.class_id = null
+                    this.classarm_id = null
+                    this.session_s = null
+                    this.term = null
+                    this.file = null
+
+                    this.failures = response.data.data.failures
+                    this.errors = response.data.data.errors
+                }
+            })
+            .catch(error => {
+                this.$loading(false)
+                if (!error.response) {
+                    this.$alert("You do not have internet access","Network Error","error");
+                    return ;
+                }
+                if (error.response.status == 422){
+                this.validationErrors = error.response.data.errors;
+                this.flashMessage.error({title: 'Validation Error', 
+                                        message: 'There is an Error with the Data you supplied',
+                                        time: 15000, });
+                }
+                if(error.response.status === 401){
+                    let return_url = window.location.pathname;
+                    this.$router.push({
+                        name: 'school-login',
+                        params: { return_url: return_url }
+                        });
+                }
+                if(error.response.status === 403){
+                    this.$alert("Sorry, you do not have the permission to perfrom this action","No Permission","error");
+                }
+                
+            });
+        },
+
+        session() {
+				const d = new Date();
+				const n = d.getFullYear();
+				const year = [];
+				for (let index = 2010; index <= n; index++) {
+					year.push(index);
+				}
+				return year;
+		    },
+    },
+}
+</script>
