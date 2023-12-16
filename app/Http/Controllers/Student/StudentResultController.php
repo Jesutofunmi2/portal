@@ -44,22 +44,22 @@ class StudentResultController extends Controller
 
         $user = Auth::guard('student_api')->user();
 
-        $payment = DigitalPayment::where([
-            'student_id' => $user->id,
-            'session' => $request->session
-            ])
-            ->first();
+        // $payment = DigitalPayment::where([
+        //     'student_id' => $user->id,
+        //     'session' => $request->session
+        //     ])
+        //     ->first();
 
         $session = $request->session + 1;
 
-        if(! ($payment && $payment->is_verified == true)){
-            return response()->json([
-                'data' => [
-                    'status' => false,
-                    'message' => "Sorry, you have not make digital payment for $request->session/$session"
-                ]
-            ]);
-        }
+        // if(! ($payment && $payment->is_verified == true)){
+        //     return response()->json([
+        //         'data' => [
+        //             'status' => false,
+        //             'message' => "Sorry, you have not make digital payment for $request->session/$session"
+        //         ]
+        //     ]);
+        // }
 
         $student_class = DB::table('classarm_student')
                                 ->where('student_id', $user->id)
