@@ -55,8 +55,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-profile-edit' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/edit-profile.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/edit-profile.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>Edit My Profile</strong></h6>
                       </div>
                     </div>
@@ -66,8 +66,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-password-edit' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/change-password.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/change-password.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>Change My Password</strong></h6>
                       </div>
                     </div>
@@ -77,8 +77,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-passport-edit' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/passport-upload.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/passport-upload.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>Upload Passport</strong></h6>
                       </div>
                     </div>
@@ -88,8 +88,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-receipt-print' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/payment.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/payment.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>Print Payment Receipt</strong></h6>
                       </div>
                     </div>
@@ -99,8 +99,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-transfer-form' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/transfer.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/transfer.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>Student Transfer Form</strong></h6>
                       </div>
                     </div>
@@ -110,8 +110,8 @@
                 <div class="col-md-3 col-sm-4 col-xs-6">
                   <router-link :to="{ name: 'student-view-result' }">
                     <div style="border-radius: 15px;" class="card">
-                      <img class="ui fuild image" height="150" width="100%" :src="url+'images/icons/view-result.png'">
-                      <div style="background-color: orange; padding: 5px; text-align: center;" class="text-white">
+                      <img class="ui fuild image" height="150" width="100%" :src="url+'assets/images/icons/view-result.png'">
+                      <div style="background-color: #45b6fe; padding: 5px; text-align: center;" class="text-white">
                         <h6><strong>View My Result</strong></h6>
                       </div>
                     </div>

@@ -112,22 +112,22 @@ class ViewResultController extends Controller
             'print_type'     => 'required','regex:/(html|pdf)/'
         ]);
 
-        $payment = DigitalPayment::where([
-            'student_id' => $request->student_id,
-            'session' => $request->session
-            ])
-            ->first();
+        // $payment = DigitalPayment::where([
+        //     'student_id' => $request->student_id,
+        //     'session' => $request->session
+        //     ])
+        //     ->first();
 
         $session = $request->session + 1;
 
-        if(! ($payment && $payment->is_verified == true)){
-            return response()->json([
-                'data' => [
-                    'status' => false,
-                    'message' => "This student have not make digital payment for $request->session/$session"
-                ]
-            ]);
-        }
+        // if(! ($payment && $payment->is_verified == true)){
+        //     return response()->json([
+        //         'data' => [
+        //             'status' => false,
+        //             'message' => "This student have not make digital payment for $request->session/$session"
+        //         ]
+        //     ]);
+        // }
         
         $student = $this->student->find($request->student_id);
 
@@ -309,22 +309,22 @@ class ViewResultController extends Controller
             'term'         => ['required','regex:/(First|Second|Third)/'],
         ]);
 
-        $payment = DigitalPayment::where([
-            'student_id' => $request->student_id,
-            'session' => $request->session
-            ])
-            ->first();
+        // $payment = DigitalPayment::where([
+        //     'student_id' => $request->student_id,
+        //     'session' => $request->session
+        //     ])
+        //     ->first();
 
         $session = $request->session + 1;
 
-        if(! ($payment && $payment->is_verified == true)){
-            return response()->json([
-                'data' => [
-                    'status' => false,
-                    'message' => "This student have not make digital payment for $request->session/$session"
-                ]
-            ]);
-        }
+        // if(! ($payment && $payment->is_verified == true)){
+        //     return response()->json([
+        //         'data' => [
+        //             'status' => false,
+        //             'message' => "This student have not make digital payment for $request->session/$session"
+        //         ]
+        //     ]);
+        // }
 
         $student = $this->student->find($request->student_id);
         $school_id = $student->school_id;

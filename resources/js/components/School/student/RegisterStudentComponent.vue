@@ -3,7 +3,7 @@
 		<div class="col-md-12 ">
 			<div class="card">
 				<div class="card-header">
-					<h4 class="card-title" id="basic-layout-tooltip">Register Student</h4>
+					<h4 class="card-title" id="basic-layout-tooltip">Register Student </h4>
 					<a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
 					<div class="heading-elements">
 						<ul class="list-inline mb-0">
@@ -36,6 +36,12 @@
 									<label for="issueinput3">Middle Name</label>
 									<input type="text" id="issueinput3" @keydown="validationErrors.middlename=null" :class="{'border-danger':validationErrors.middlename}" v-model="student.middlename" class="form-control" placeholder="Middle Name" name="middlename" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Middle Name">
 									<span v-if="validationErrors.middlename" :class="['label text-danger']">{{ validationErrors.middlename[0] }}</span>
+								</div>
+
+                                <div class="form-group col-md-6">
+									<label for="issueinput3">Admission No</label>
+									<input type="text" id="issueinput3" @keydown="validationErrors.admission_no=null" :class="{'border-danger':validationErrors.admission_no}" v-model="student.admission_no" class="form-control" placeholder="Admission No" name="admission_no" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Admission No">
+									<span v-if="validationErrors.admission_no" :class="['label text-danger']">{{ validationErrors.admission_no[0] }}</span>
 								</div>
 
                                 <div class="form-group col-md-6">
@@ -117,8 +123,9 @@
 
 								<div class="form-group col-md-6">
 									<label for="issueinput9">State</label>
-									<select id="issueinput9" v-model="student.state_id" class="form-control" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Select State" required>
-										<option selected="selected">{{ state }}</option>
+									<select id="issueinput9" v-model="student.state_id"  @change="getLga($event)" class="form-control" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Select State" required>
+										<option selected="selected">Select state</option>
+                                        <option v-for="state in states" :key="state.id" :value="state.id" >{{ state.name }}</option>
 									</select>
                                     <span  v-if="validationErrors.state_id" :class="['label text-danger']">{{ validationErrors.state_id[0] }}</span>
 								</div>
@@ -127,7 +134,7 @@
 									<label for="issueinput10">Local Goverment Area</label>
 									<select id="issueinput10" v-model="student.lga_id" @change="validationErrors.lga_id=null" :class="{'border-danger':validationErrors.lga_id}" class="form-control" name="lga_id" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Local Goverment Area" required>
 										<option value="">Select LGA</option>
-										<option :value="lga.id" v-for ="(lga ,index) in lgas" :key ="index" >{{ lga.name }}</option>
+										<option :value="lga.id" v-for ="(lga ,index) in state_lga" :key ="index" >{{ lga.name }}</option>
 									</select>
 									<span  v-if="validationErrors.lga_id" :class="['label text-danger']">{{ validationErrors.lga_id[0] }}</span>
 								</div>
@@ -234,6 +241,7 @@ export default {
         return {
             currDate : new Date().getFullYear(),
             state : '',
+            states: [],
             lgas : '',
             houses : '',
             classes : '',
@@ -243,6 +251,7 @@ export default {
                 surname : '',
                 firstname : '',
                 middlename : '',
+                admission_no : '',
                 dob : '',
                 gender : '',
                 country : '',
@@ -273,36 +282,79 @@ export default {
     mounted() {
         this.getState(),
         this.getSessions()
+        this.getClasses()
     },
 
     methods: {
-        getState() {
-            this.$loading(true)
-            axios.get('/api/general/get_state')
-            .then((res) => {
-                this.state = res.data.state,
-                this.lgas = res.data.data
-                this.$loading(false);
-                this.getClasses();
-                this.getHouses();
-            })
-            .catch((error) => {
-                this.$loading(false)
-                if (!error.response) {
-                    this.$alert("You do not have internet access","Network Error","error");
-                    this.$router.go(-1) ;
-                    return ;
-                }
-                if(error.response.status === 401){
-                    let return_url = window.location.pathname;
-                    this.$router.push({
-                                name: 'school-login',
-                                params: { return_url: return_url }
-                                });
-                }
+        getState(){
+				this.$loading(true)
+				axios.get('/api/general/get_state')
+				.then((res) => {
+					this.state = res.data.state;
+					this.lgas = res.data.data;
+					this.$loading(false);
+					this.getAllState();
+				})
+				.catch((error) => {
+					this.$loading(false)
+					if (!error.response) {
+						this.$alert("You do not have internet access","Network Error","error");
+						this.$router.go(-1) ;
+						return ;
+					}
+					if(error.response.status === 401){
+						let return_url = window.location.pathname;
+						this.$router.push({
+									name: "aeo_zeo-login",
+									params: { return_url: return_url }
+									});
+					}
+	
+				})
+			},
 
-            })
-        },
+			getAllState(){
+				this.$loading(true)
+				axios.get('/api/general/get_state/all')
+				.then((res) => {
+					this.states = res.data.data.states,
+					this.$loading(false)
+				})
+				.catch((error) => {
+					this.$loading(false)
+					if (!error.response) {
+						this.$alert("You do not have internet access","Network Error","error");
+						return ;
+					}
+	
+				})
+			},
+
+			getLga(){
+				if(this.validationErrors && this.validationErrors.state_id!=null) this.validationErrors.state_id=null;
+				this.$loading(true);
+				axios.get('/api/general/get_lga?state_id='+this.student.state_id)
+				.then((res) => {
+					this.state_lga = res.data.data,
+					this.$loading(false)
+				})
+				.catch((error) => {
+					this.$loading(false)
+					if (!error.response) {
+						this.$alert("You do not have internet access","Network Error","error");
+						this.$router.go(-1) ;
+						return ;
+					}
+					if(error.response.status === 401){
+						let return_url = window.location.pathname;
+						this.$router.push({
+									name: "aeo_zeo-login",
+									params: { return_url: return_url }
+									});
+					}
+	
+				})
+			},
 
         getHouses() {
             this.$loading(true)
@@ -425,6 +477,7 @@ export default {
             data.append('surname', this.student.surname);
             data.append('firstname', this.student.firstname);
             data.append('middlename', this.student.middlename);
+            data.append('admission_no', this.student.admission_no);
             data.append('dob', this.student.dob);
             data.append('gender', this.student.gender);
             data.append('country', 'NIGERIA');
@@ -464,6 +517,7 @@ export default {
                 this.student.surname=null;
                 this.student.firstname=null;
                 this.student.middlename=null;
+                this.student.admission_no=null;
                 this.student.address=null;
                 this.student.dob=null;
                 this.student.gender=null;

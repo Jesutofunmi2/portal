@@ -106,6 +106,7 @@ class RegisterStudentController extends Controller
             'surname' => $request->input('surname'),
             'firstname' => $request->input('firstname'),
             'middlename' => $request->input('middlename'),
+            'admission_no' => $request->input('admission_no'),
             'regnum' => $regnum,
             'regnum_digit' => $regnum_digit,
             'dob' => $request->input('dob'),

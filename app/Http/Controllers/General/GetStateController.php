@@ -30,9 +30,9 @@ class GetStateController extends Controller
     public function getState(Request $request)
     {
         $state = env('STATE_ID');
-        $ngstate =  $this->ngstate->find($state);
+        //$ngstate =  $this->ngstate->find($state);
+        $ngstate =  $this->ngstate->getAll(['id','name']);
 
-       
         $user = Auth::guard('ministry_api')->user();
 
         if($user && $user->is_aeozeo) {

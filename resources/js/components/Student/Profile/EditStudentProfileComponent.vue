@@ -91,7 +91,7 @@
 									<div class="col-md-3">
 										<div class="form-group">
 											<label for="issueinput1">State of Origin</label>
-											<select type="text" v-model="student.state_id" @change="getLga()" :class="{'border-danger':validationErrors.state_id}" class="form-control" placeholder="Select State of Origin"  data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Select State of Origin" required>
+											<select type="text" v-model="student.state_id" :class="{'border-danger':validationErrors.state_id}" class="form-control" placeholder="Select State of Origin"  data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="Select State of Origin" required>
 												<option value="">Select State of Origin</option>
 												<option v-for="state in states" :key="state.id" :value="state.id" >{{ state.name }}</option>
 											</select>

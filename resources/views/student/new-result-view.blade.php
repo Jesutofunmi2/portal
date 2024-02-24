@@ -47,7 +47,7 @@
 			return false;
     	}
 	@endphp
-<table style="background-image: url('https://odsgmoest.org.ng/eportal/public/images/logo-bg.png');">
+<table style="background-image: url('{{$schoolLogoo}}');">
 	<tbody>
 		<tr>
 			<td style="text-align: center;">
